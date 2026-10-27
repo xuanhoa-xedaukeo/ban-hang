@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bảo Tàng Sách Bán Hàng Thịnh Vượng - XUAN HOÀ BÁN HÀNG</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,800;1,400&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        gold: {
+                            100: '#FFF9E6',
+                            300: '#FFE082',
+                            500: '#D4AF37',
+                            600: '#AA7C11',
+                            700: '#8B6508'
+                        },
+                        emerald: {
+                            900: '#064E3B',
+                            950: '#022C22'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Montserrat', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                        cursive: ['Dancing Script', 'cursive']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background: radial-gradient(circle at center, #0f2027, #203a43, #2c5364);
+            color: #f3f4f6;
+            overflow-x: hidden;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        /* Gold Gradient Text */
+        .gold-text {
+            background: linear-gradient(135deg, #FFF9E6 0%, #D4AF37 50%, #AA7C11 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* 3D Book Container */
+        .book-card {
+            perspective: 1000px;
+            transition: all 0.4s ease;
+        }
+
+        .book-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+
+        .book-card:hover .book-inner {
+            transform: rotateY(-20deg) scale(1.05);
+        }
+
+        .book-spine {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 30px;
+            height: 100%;
+            background: linear-gradient(90deg, #555, #222);
+            transform: rotateY(-90deg) translateZ(15px);
+            border-radius: 3px 0 0 3px;
+        }
+
+        /* Glow effects */
+        .gold-glow {
+            box-shadow: 0 0 25px rgba(212, 175, 55, 0.4);
+        }
+        .gold-glow:hover {
+            box-shadow: 0 0 40px rgba(212, 175, 55, 0.8);
+        }
+
+        /* Floating particles canvas */
+        #particleCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f2027;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d4af37;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="relative">
+
+    <!-- Particle Canvas -->
+    <canvas id="particleCanvas"></canvas>
+
+    <!-- Header Section -->
+    <header class="relative z-10 py-10 text-center border-b border-yellow-600/30 bg-black/40 backdrop-blur-md">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="inline-block px-4 py-1 mb-3 rounded-full bg-yellow-500/10 border border-yellow-500/40 text-yellow-300 text-sm tracking-widest uppercase font-semibold">
+                ✨ Tuyệt Đỉnh Tri Thức Bán Hàng
+            </div>
+            <h1 class="text-4xl md:text-6xl font-extrabold font-serif mb-4 gold-text tracking-wide drop-shadow-lg">
+                BẢO TÀNG SÁCH BÁN HÀNG THỊNH VƯỢNG
+            </h1>
+            <p class="text-lg md:text-xl text-gray-300 font-light max-w-3xl mx-auto leading-relaxed">
+                Khám phá 10 bí truyền bán hàng đỉnh cao nhất mọi thời đại. Kiến tạo tư duy thịnh vượng, bứt phá doanh số cùng thương hiệu <span class="text-yellow-400 font-bold">XUAN HOÀ BÁN HÀNG</span>.
+            </p>
+
+            <!-- Audio Player Widget -->
+            <div class="mt-8 inline-flex items-center gap-4 px-6 py-3 rounded-full bg-slate-900/80 border border-yellow-500/50 gold-glow">
+                <button id="playAudioBtn" onclick="toggleAudio()" class="w-12 h-12 rounded-full bg-gradient-to-r from-yellow-500 to-yellow-600 text-slate-950 flex items-center justify-center font-bold text-xl hover:scale-105 transition-all">
+                    <i id="audioIcon" class="fas fa-play ml-1"></i>
+                </button>
+                <div class="text-left">
+                    <div class="text-sm font-bold text-yellow-300">🎵 Bản Nhạc Bán Hàng Thịnh VƯỢNG (432Hz)</div>
+                    <div class="text-xs text-gray-400">Tần số thu hút năng lượng tài lộc & may mắn</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="relative z-10 max-w-7xl mx-auto px-4 py-12">
+
+        <!-- Bookshelf Header -->
+        <div class="flex flex-col md:flex-row items-center justify-between mb-10 pb-4 border-b border-gray-700">
+            <div>
+                <h2 class="text-2xl md:text-3xl font-bold font-serif text-yellow-400">
+                    <i class="fas fa-book-bookmark mr-3"></i>10 Tác Phẩm Kinh Điển
+                </h2>
+                <p class="text-gray-400 text-sm mt-1">Nhấp vào bất kỳ cuốn sách nào để mở lật sách 3D & đọc bài học thực chiến</p>
+            </div>
+            <div class="mt-4 md:mt-0 flex gap-3">
+                <span class="px-4 py-2 rounded-lg bg-emerald-950 border border-emerald-500/40 text-emerald-300 text-sm flex items-center gap-2">
+                    <i class="fas fa-check-circle"></i> Tiến độ: <span id="progressCount" class="font-bold">0</span>/10
+                </span>
+            </div>
+        </div>
+
+        <!-- 3D Bookshelf Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 mb-16" id="booksGrid">
+            <!-- Books will be injected dynamically by JavaScript -->
+        </div>
+
+        <!-- Xuan Hoa Brand Signature Box -->
+        <div class="p-8 md:p-12 rounded-2xl bg-gradient-to-br from-slate-900 via-emerald-950 to-slate-900 border-2 border-yellow-500/60 shadow-2xl relative overflow-hidden my-16 text-center">
+            <div class="inline-block p-4 rounded-full bg-yellow-500/10 border border-yellow-500/30 mb-4">
+                <i class="fas fa-award text-4xl text-yellow-400"></i>
+            </div>
+            <h3 class="text-3xl md:text-4xl font-extrabold font-serif text-yellow-300 mb-2">
+                "Bán Hàng Là Trao Giá Trị - Phục Vụ Từ Tâm"
+            </h3>
+            <p class="text-gray-300 text-base md:text-lg max-w-2xl mx-auto mb-6 italic">
+                Cung cấp các dòng Xe Đầu Kéo - Container - Rơ Moóc đã qua sử dụng chất lượng cao. Đồng hành cùng thành công và sự thịnh vượng của mọi bác tài & doanh nghiệp.
+            </p>
+            
+            <div class="text-2xl font-bold font-serif text-yellow-400 tracking-wider mb-2">
+                KÝ TÊN: <span class="font-cursive text-4xl text-yellow-300 ml-2">XUAN HOÀ BÁN HÀNG</span>
+            </div>
+            <p class="text-gray-400 text-sm">📍 Dĩ An, Bình Dương | 📞 Hotline/Zalo: <a href="tel:0978244969" class="text-yellow-400 hover:underline font-bold">0978.244.969</a></p>
+
+            <div class="mt-8 flex flex-wrap justify-center gap-4">
+                <a href="https://zalo.me/0978244969" target="_blank" class="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold flex items-center gap-2 shadow-lg hover:scale-105 transition-all">
+                    <i class="fas fa-comment-dots"></i> Nhắn Zalo Tư Vấn Xe
+                </a>
+                <button onclick="openShareModal()" class="px-6 py-3 rounded-xl bg-gradient-to-r from-yellow-500 to-yellow-600 text-slate-950 font-bold flex items-center gap-2 shadow-lg hover:scale-105 transition-all">
+                    <i class="fas fa-share-alt"></i> Chia Sẻ Trang Web
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Floating Dock Sidebar (Social & AI) -->
+    <div class="fixed right-4 bottom-6 z-40 flex flex-col gap-3">
+        <button onclick="toggleAiChat()" class="w-14 h-14 rounded-full bg-gradient-to-r from-yellow-500 to-yellow-600 text-slate-950 font-bold text-2xl flex items-center justify-center shadow-2xl hover:scale-110 transition-all gold-glow relative">
+            <i class="fas fa-robot"></i>
+        </button>
+        <a href="https://zalo.me/0978244969" target="_blank" class="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-lg hover:scale-110 transition-all text-xl">
+            <i class="fas fa-phone"></i>
+        </a>
+    </div>
+
+    <!-- AI Assistant Modal Chatbot -->
+    <div id="aiChatModal" class="fixed bottom-24 right-4 z-50 w-96 max-w-[calc(100vw-2rem)] h-[500px] bg-slate-900 border-2 border-yellow-500/60 rounded-2xl shadow-2xl flex flex-col hidden overflow-hidden">
+        <div class="p-4 bg-gradient-to-r from-slate-900 to-emerald-950 border-b border-yellow-500/40 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-yellow-500 text-slate-950 flex items-center justify-center font-bold text-xl">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <div>
+                    <h4 class="font-bold text-yellow-300 text-sm">Trợ Lý AI XUAN HOÀ</h4>
+                    <p class="text-xs text-emerald-400">● Đang trực tuyến (Sẵn sàng)</p>
+                </div>
+            </div>
+            <button onclick="toggleAiChat()" class="text-gray-400 hover:text-white text-xl">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div id="chatMessages" class="flex-1 p-4 overflow-y-auto space-y-3 text-sm">
+            <div class="p-3 rounded-xl bg-slate-800 text-gray-200 max-w-[85%] border border-gray-700">
+                Xin chào Chủ Nhân! Em là **Trợ Lý AI XUAN HOÀ**. Em có thể tư vấn tuyệt chiêu bán hàng, xử lý từ chối giá xe, hoặc tóm tắt sách cho Chủ Nhân!
+            </div>
+        </div>
+
+        <div class="p-3 bg-slate-950 border-t border-gray-800 flex gap-2">
+            <input type="text" id="chatInput" placeholder="Nhập câu hỏi..." class="flex-1 px-3 py-2 rounded-lg bg-slate-800 text-white border border-gray-700 text-sm focus:outline-none focus:border-yellow-500" onkeypress="if(event.key==='Enter') sendChatMessage()">
+            <button onclick="sendChatMessage()" class="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-slate-950 font-bold rounded-lg text-sm">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- 3D Book Detail Modal -->
+    <div id="bookModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 hidden">
+        <div class="relative w-full max-w-4xl bg-slate-900 border-2 border-yellow-500/70 rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
+            <button onclick="closeBookModal()" class="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-gray-800/80 text-yellow-400 hover:bg-yellow-500 hover:text-black font-bold text-xl flex items-center justify-center transition-all">
+                <i class="fas fa-times"></i>
+            </button>
+
+            <div class="p-6 md:p-8 overflow-y-auto flex-1 grid grid-cols-1 md:grid-cols-12 gap-8">
+                <div class="md:col-span-5 flex flex-col items-center">
+                    <div id="modalBookCover" class="w-56 h-80 rounded-xl shadow-2xl p-6 text-center flex flex-col justify-between border-2 border-yellow-500/50 mb-4 gold-glow">
+                    </div>
+                    <button id="markReadBtn" onclick="toggleReadStatus()" class="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold flex items-center justify-center gap-2 transition-all">
+                        <i class="fas fa-check-double"></i> Đánh Dấu Đã Học
+                    </button>
+                </div>
+
+                <div class="md:col-span-7 space-y-4">
+                    <span id="modalBookBadge" class="inline-block px-3 py-1 rounded-full bg-yellow-500/20 border border-yellow-500/50 text-yellow-300 text-xs font-bold">
+                        Bán Hàng Kinh Điển
+                    </span>
+                    <h2 id="modalBookTitle" class="text-2xl md:text-3xl font-extrabold font-serif text-yellow-400"></h2>
+                    <p id="modalBookAuthor" class="text-sm text-gray-400 font-semibold"></p>
+                    
+                    <div class="p-4 rounded-xl bg-slate-800/80 border border-gray-700 space-y-2">
+                        <h4 class="font-bold text-yellow-300 text-sm"><i class="fas fa-key mr-2"></i>Bí Quyết Cốt Lõi:</h4>
+                        <p id="modalBookCore" class="text-sm text-gray-200 leading-relaxed"></p>
+                    </div>
+
+                    <div class="p-4 rounded-xl bg-emerald-950/60 border border-emerald-500/40 space-y-2">
+                        <h4 class="font-bold text-emerald-300 text-sm"><i class="fas fa-truck-monster mr-2"></i>Kịch Bản Ứng Dụng Ngành Xe & Bán Hàng:</h4>
+                        <p id="modalBookScript" class="text-sm text-emerald-100 leading-relaxed italic"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Engine -->
+    <script>
+        const salesBooks = [
+            { id: 1, title: "Tử Huyệt Cảm Xúc", author: "Roy Garn", color: "from-red-900 via-rose-950 to-slate-900", badge: "Tâm Lý Học", core: "Mọi hành vi mua hàng đều xuất phát từ 4 tử huyệt: Bản thân, Tiền bạc, Tình yêu và Danh tiếng.", script: "Khi tư vấn Xe Đầu Kéo: Nhấn vào Tử Huyệt Tiền Bạc (tiết kiệm nhiên liệu) & Tử Huyệt Bản Thân (an toàn trên mọi cung đường)." },
+            { id: 2, title: "Những Đòn Tâm Lý Trong Bán Hàng", author: "Brian Tracy", color: "from-amber-900 via-yellow-950 to-slate-900", badge: "Kinh Điển", core: "Loại bỏ nỗi sợ bị từ chối. Tập trung vào việc lắng nghe và giúp khách hàng giải quyết vấn đề thực tế.", script: "Không cố chốt xe ngay. Hãy hỏi: 'Bác tài đang chở hàng tải trọng bao nhiêu để em chọn con xe tối ưu chi phí nhất?'" },
+            { id: 3, title: "Bán Hàng Bằng Câu Chuyện", author: "Paul Smith", color: "from-blue-900 via-indigo-950 to-slate-900", badge: "Storytelling", core: "Khách hàng quên thông số kỹ thuật nhưng nhớ mãi câu chuyện thực tế về sự lột lột lột xác và thành công.", script: "Kể câu chuyện anh đối tác ở Dĩ An đầu tư dàn container cũ bên Xuân Hoà và thu hồi vốn chỉ sau 6 tháng." },
+            { id: 4, title: "Chốt Sale Không Lối Thoát", author: "Grant Cardone", color: "from-emerald-900 via-green-950 to-slate-900", badge: "Bứt Phá", core: "Sự kiên trì vượt trội. Bán hàng là thuyết phục người khác tin vào điều bạn tin tưởng tuyệt đối.", script: "Cung cấp đầy đủ hồ sơ pháp lý, lịch sử bảo dưỡng xe rõ ràng để khách hàng hoàn toàn yên tâm đặt cọc." },
+            { id: 5, title: "SPIN Selling - Bán Hàng B2B", author: "Neil Rackham", color: "from-purple-900 via-indigo-950 to-slate-900", badge: "Hệ Thống", core: "Mô hình 4 bước câu hỏi: Tình trạng (S) - Vấn đề (P) - Gợi ý (I) - Nhu cầu đáp ứng (N).", script: "Hỏi doanh nghiệp vận tải về chi phí sửa chữa xe cũ (P) và đề xuất phương án đổi sang dàn rơ-moóc chuẩn của Xuân Hoà (N)." },
+            { id: 6, title: "Vua Bán Hàng", author: "Blair Singer", color: "from-yellow-800 via-amber-950 to-slate-900", badge: "Đội Ngũ", core: "Nhận diện 5 chú chó bán hàng (Sales Dogs) để phát huy tối đa thế mạnh cá nhân.", script: "Phân công nhân sự theo đúng tính cách: Người đi đàm phán hợp đồng xe lớn, người chăm sóc hậu mãi chu đáo." },
+            { id: 7, title: "Nghệ Thuật Bán Hàng Cho Người Sợ Bán Hàng", author: "Matthew Pollard", color: "from-teal-900 via-cyan-950 to-slate-900", badge: "Quy Trình", core: "Bán hàng không cần hoạt ngôn. Người hướng nội hoàn toàn có thể vô địch nhờ quy trình chuẩn bị bài bản.", script: "Lập sẵn bảng so sánh giá trị xe đầu kéo chi tiết gửi Zalo cho khách hàng nghiên cứu trước khi đến bãi." },
+            { id: 8, title: "Kinh Thánh Bán Hàng", author: "Jeffrey Gitomer", color: "from-rose-900 via-red-950 to-slate-900", badge: "Thực Chiến", core: "Thái độ tích cực là chìa khóa. Khách hàng mua sự nhiệt tình và chuyên nghiệp của bạn trước khi mua sản phẩm.", script: "Luôn đón tiếp khách xem xe tại bãi Dĩ An với nụ cười chân thành, cà phê mát lạnh và sự tử tế tối đa." },
+            { id: 9, title: "The Challenger Sale - Nhà Thách Thức", author: "Matthew Dixon", color: "from-blue-950 via-slate-900 to-black", badge: "Tư Duy", core: "Không chỉ nuông chiều khách hàng, hãy thách thức tư duy của họ bằng góc nhìn chuyên gia sắc bén.", script: "Chỉ ra rủi ro khi mua xe trôi nổi không rõ nguồn gốc và giải thích vì sao chọn bãi xe uy tín giúp tiết kiệm hàng trăm triệu." },
+            { id: 10, title: "Đắc Nhân Tâm Trong Bán Hàng", author: "Dale Carnegie", color: "from-yellow-900 via-amber-950 to-slate-900", badge: "Thu Phục", core: "Mối quan hệ chân thành là nền tảng. Nhớ tên khách hàng, lắng nghe sâu và tạo dựng niềm tin bền vững.", script: "Coi khách mua xe là tri kỷ đồng hành lâu dài. Hỗ trợ kỹ thuật và giấy tờ tận tâm ngay cả sau khi đã hoàn tất hợp đồng." }
+        ];
+
+        let readBooks = JSON.parse(localStorage.getItem('xuanhoa_read_books') || '[]');
+        let currentBookId = null;
+
+        function renderBooks() {
+            const grid = document.getElementById('booksGrid');
+            grid.innerHTML = salesBooks.map((book, idx) => {
+                const isRead = readBooks.includes(book.id);
+                return `
+                    <div class="book-card cursor-pointer" onclick="openBookModal(${book.id})">
+                        <div class="book-inner h-80 rounded-xl bg-gradient-to-br ${book.color} p-5 border-2 ${isRead ? 'border-emerald-400' : 'border-yellow-500/50'} shadow-xl flex flex-col justify-between relative overflow-hidden gold-glow">
+                            <div class="book-spine"></div>
+                            <div class="flex justify-between items-start">
+                                <span class="px-2 py-1 rounded bg-black/50 text-yellow-300 text-[10px] font-bold border border-yellow-500/30">#${idx+1} ${book.badge}</span>
+                                ${isRead ? '<i class="fas fa-check-circle text-emerald-400 text-lg"></i>' : ''}
+                            </div>
+                            <div class="my-auto text-center">
+                                <h3 class="text-lg font-bold font-serif text-yellow-300 mb-2 leading-snug">${book.title}</h3>
+                                <p class="text-xs text-gray-300 italic">${book.author}</p>
+                            </div>
+                            <div class="pt-3 border-t border-yellow-500/30 text-center">
+                                <span class="text-xs text-yellow-400 font-semibold flex items-center justify-center gap-1"><i class="fas fa-book-open"></i> Lật Sách Xem</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            document.getElementById('progressCount').innerText = readBooks.length;
+        }
+
+        function openBookModal(id) {
+            currentBookId = id;
+            const book = salesBooks.find(b => b.id === id);
+            const isRead = readBooks.includes(id);
+
+            document.getElementById('modalBookCover').className = `w-56 h-80 rounded-xl shadow-2xl p-6 text-center flex flex-col justify-between border-2 border-yellow-500/50 mb-4 bg-gradient-to-br ${book.color} gold-glow`;
+            document.getElementById('modalBookCover').innerHTML = `
+                <span class="text-xs text-yellow-300 font-bold uppercase tracking-widest">${book.badge}</span>
+                <h3 class="text-2xl font-bold font-serif text-yellow-300 my-auto">${book.title}</h3>
+                <p class="text-xs text-gray-300 italic">${book.author}</p>
+            `;
+
+            document.getElementById('modalBookBadge').innerText = book.badge;
+            document.getElementById('modalBookTitle').innerText = book.title;
+            document.getElementById('modalBookAuthor').innerText = `Tác giả: ${book.author}`;
+            document.getElementById('modalBookCore').innerText = book.core;
+            document.getElementById('modalBookScript').innerText = `"${book.script}"`;
+
+            const btn = document.getElementById('markReadBtn');
+            if (isRead) {
+                btn.className = "w-full py-3 rounded-xl bg-gray-700 text-gray-300 font-bold flex items-center justify-center gap-2";
+                btn.innerHTML = `<i class="fas fa-undo"></i> Đánh Dấu Chưa Học`;
+            } else {
+                btn.className = "w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold flex items-center justify-center gap-2 transition-all";
+                btn.innerHTML = `<i class="fas fa-check-double"></i> Đánh Dấu Đã Học`;
+            }
+
+            document.getElementById('bookModal').classList.remove('hidden');
+        }
+
+        function closeBookModal() {
+            document.getElementById('bookModal').classList.add('hidden');
+        }
+
+        function toggleReadStatus() {
+            if (!currentBookId) return;
+            if (readBooks.includes(currentBookId)) {
+                readBooks = readBooks.filter(id => id !== currentBookId);
+            } else {
+                readBooks.push(currentBookId);
+            }
+            localStorage.setItem('xuanhoa_read_books', JSON.stringify(readBooks));
+            renderBooks();
+            openBookModal(currentBookId);
+        }
+
+        // Web Audio Synth
+        let audioCtx = null;
+        let isPlaying = false;
+        function toggleAudio() {
+            const icon = document.getElementById('audioIcon');
+            if (!isPlaying) {
+                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                audioCtx.resume();
+                isPlaying = true;
+                icon.className = "fas fa-pause";
+            } else {
+                isPlaying = false;
+                icon.className = "fas fa-play ml-1";
+            }
+        }
+
+        function toggleAiChat() {
+            document.getElementById('aiChatModal').classList.toggle('hidden');
+        }
+
+        function sendChatMessage() {
+            const input = document.getElementById('chatInput');
+            const txt = input.value.trim();
+            if (!txt) return;
+            const box = document.getElementById('chatMessages');
+            box.innerHTML += `<div class="p-3 rounded-xl bg-yellow-500 text-slate-950 font-medium max-w-[85%] ml-auto text-right">${txt}</div>`;
+            input.value = '';
+            setTimeout(() => {
+                box.innerHTML += `<div class="p-3 rounded-xl bg-slate-800 text-gray-200 max-w-[85%] border border-gray-700">Tất cả thành công trong bán hàng đều bắt đầu từ sự chân thành và tử tế từ tâm thưa Chủ Nhân!</div>`;
+                box.scrollTop = box.scrollHeight;
+            }, 500);
+        }
+
+        // Particle Canvas
+        const canvas = document.getElementById('particleCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        let particles = [];
+        for (let i = 0; i < 35; i++) {
+            particles.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                size: Math.random() * 3 + 1,
+                speedY: Math.random() * -0.6 - 0.2
+            });
+        }
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.y += p.speedY;
+                if (p.y < 0) p.y = canvas.height;
+                ctx.fillStyle = "rgba(212, 175, 55, 0.5)";
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
+        renderBooks();
+    </script>
+</body>
+</html>
